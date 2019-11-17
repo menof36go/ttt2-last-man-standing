@@ -135,7 +135,7 @@ if SERVER then
         local Players = player.GetAll()
         local innosLeft = 0
         for i,ply in ipairs(Players) do
-            if ply:Alive() then
+            if ply:Alive() and ply:IsTerror() then
                 local team = ply:GetTeam()
                 debugPrint(ply:GetName(), team)
                 if team == "innocents" then
