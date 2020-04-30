@@ -129,7 +129,6 @@ if SERVER then
             net.WriteBool(true)
             net.Broadcast()
             net.Start("ttt_lms_reveal")
-            net.WriteBool(true)
             net.Send(caller)
             ULib.csay(nil, "Team " .. string.upper(role.name) .. " has revealed itself!", Color(240,240,240,255), 5)
         end
@@ -202,7 +201,6 @@ if SERVER then
             net.WriteBool(true)
             net.Broadcast()
             net.Start("ttt_lms_innocent")
-            net.WriteBool(true)
             net.Send(caller)
             ULib.csay(nil, caller:GetName() .. " figured out that they are on their own!", Color(255,255,255,255), 5)
         end
@@ -270,13 +268,13 @@ if CLIENT then
     end)
 
     net.Receive("ttt_lms_reveal",function()
-      if (net.ReadBool()) and (isfunction(StatisticsUpdatePData)) then
+      if (isfunction(StatisticsUpdatePData)) then
         StatisticsUpdatePData("lms_Revealed", " revealed his/her role in total ", " times")
       end
     end)
 
     net.Receive("ttt_lms_innocent",function()
-      if (net.ReadBool()) and (isfunction(StatisticsUpdatePData)) then
+      if (isfunction(StatisticsUpdatePData)) then
         StatisticsUpdatePData("lms_GuessedRight", " figured out that they are on their own for the ","th time")
         LastInnoStanding = true -- see sh_lms_statistics.lua
       end
