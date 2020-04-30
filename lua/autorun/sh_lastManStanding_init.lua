@@ -42,8 +42,8 @@ if SERVER then
         end
     end)
     util.AddNetworkString("ttt_lms_notify")
-    util.AddNetworkString("lms_statistics_inno")
-    util.AddNetworkString("lms_statistics_reveal")
+    util.AddNetworkString("ttt_lms_innocent")
+    util.AddNetworkString("ttt_lms_reveal")
     concommand.Add("ttt_lastmanstanding", function(caller) OnLastManStanding(caller) end)
     concommand.Add("ttt_lastmanreveal", function(caller) OnLastManReveal(caller) end)
 
@@ -128,9 +128,9 @@ if SERVER then
             net.Start("ttt_lms_notify")
             net.WriteBool(true)
             net.Broadcast()
-            net.Start("lms_statistics_reveal")
-            net.WriteEntity(caller)
-            net.Broadcast()
+            net.Start("ttt_lms_reveal")
+            net.WriteBool(true)
+            net.Send(caller)
             ULib.csay(nil, "Team " .. string.upper(role.name) .. " has revealed itself!", Color(240,240,240,255), 5)
         end
     end
@@ -201,9 +201,9 @@ if SERVER then
             net.Start("ttt_lms_notify")
             net.WriteBool(true)
             net.Broadcast()
-            net.Start("lms_statistics_inno")
-            net.WriteEntity(caller)
-            net.Broadcast()
+            net.Start("ttt_lms_innocent")
+            net.WriteBool(true)
+            net.Send(caller)
             ULib.csay(nil, caller:GetName() .. " figured out that they are on their own!", Color(255,255,255,255), 5)
         end
     end
@@ -269,16 +269,16 @@ if CLIENT then
         end
     end)
 
-    net.Receive("lms_statistics_reveal",function()
-      if (net.ReadEntity() == LocalPlayer()) and (isfunction(StatisticsUpdatePData)) then
+    net.Receive("ttt_lms_reveal",function()
+      if (net.ReadBool()) and (isfunction(StatisticsUpdatePData)) then
         StatisticsUpdatePData("lms_Revealed", " revealed his/her role in total ", " times")
       end
     end)
 
-    net.Receive("lms_statistics_inno",function()
-      if (net.ReadEntity() == LocalPlayer()) and (isfunction(StatisticsUpdatePData)) then
+    net.Receive("ttt_lms_innocent",function()
+      if (net.ReadBool()) and (isfunction(StatisticsUpdatePData)) then
         StatisticsUpdatePData("lms_GuessedRight", " figured out that they are on their own for the ","th time")
-        LastInnoStanding() -- see sh_lms_statistics.lua
+        LastInnoStanding = true -- see sh_lms_statistics.lua
       end
     end)
 end
