@@ -33,8 +33,9 @@ if CLIENT then
   end
 
   hook.Add("TTT2FinishedLoading", "ttt_lms_statistics", function()
+    local PDEntries = {"lms_GuessedRight", "lms_GuessedWrong", "lms_WonAsLMS", "lms_Revealed"}
     if isfunction(AddYourStatisticsAddon) then
-      AddYourStatisticsAddon("Last Man Standing", LMSStatisticsIntegration)
+      AddYourStatisticsAddon("Last Man Standing", LMSStatisticsIntegration, PDEntries)
     end
   end)
 end
