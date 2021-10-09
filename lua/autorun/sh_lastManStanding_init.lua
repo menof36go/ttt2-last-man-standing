@@ -67,6 +67,10 @@ if SERVER then
     end
 
     function OnLastManReveal(caller)
+	if (caller:GetTeam() == "nones") then
+            ULib.tsayError(caller, "You have no team!", true)
+            return
+        end
         if (lmsWasUsed) then
             ULib.tsayError(caller, "Someone has already figured out that they are on their own, you are too late!", true)
             return
