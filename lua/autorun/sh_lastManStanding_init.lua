@@ -13,9 +13,9 @@ if SERVER then
         end
     end
 
-    hook.Add("TTTBeginRound", "ttt_lms_reset", function() 
+    hook.Add("TTTBeginRound", "ttt_lms_reset", function()
         lmsWasUsed = false
-        teamWasRevealed = false 
+        teamWasRevealed = false
     end)
     hook.Add("PlayerSay", "ttt_lms_command", function(ply, text, team)
         -- Make the chat message entirely lowercase
@@ -42,6 +42,8 @@ if SERVER then
         end
     end)
     util.AddNetworkString("ttt_lms_notify")
+    util.AddNetworkString("ttt_lms_innocent")
+    util.AddNetworkString("ttt_lms_reveal")
     concommand.Add("ttt_lastmanstanding", function(caller) OnLastManStanding(caller) end)
     concommand.Add("ttt_lastmanreveal", function(caller) OnLastManReveal(caller) end)
 
@@ -74,8 +76,8 @@ if SERVER then
         end
 
         if !caller:Alive() then
-            return 
-        end 
+            return
+        end
         local role = roles.GetByIndex(caller:GetBaseRole())
         debugPrint("Baserole", role.name, role.defaultTeam)
         if (caller:GetTeam() != "innocents") then
@@ -126,6 +128,8 @@ if SERVER then
             net.Start("ttt_lms_notify")
             net.WriteBool(true)
             net.Broadcast()
+            net.Start("ttt_lms_reveal")
+            net.Send(caller)
             ULib.csay(nil, "Team " .. string.upper(role.name) .. " has revealed itself!", Color(240,240,240,255), 5)
         end
     end
@@ -157,11 +161,11 @@ if SERVER then
         end
 
         local ownTeam = caller:GetTeam()
-        if !caller:Alive() then 
-            return 
-        end 
-        if !(ownTeam == "innocents") then 
-            return 
+        if !caller:Alive() then
+            return
+        end
+        if !(ownTeam == "innocents") then
+            return
         end
 
         local innosLeft = getInnosLeft()
@@ -192,10 +196,12 @@ if SERVER then
                     caller:SetHealth(newHealth)
                 end
             end
-            
+
             net.Start("ttt_lms_notify")
             net.WriteBool(true)
             net.Broadcast()
+            net.Start("ttt_lms_innocent")
+            net.Send(caller)
             ULib.csay(nil, caller:GetName() .. " figured out that they are on their own!", Color(255,255,255,255), 5)
         end
     end
@@ -209,7 +215,7 @@ if SERVER then
             item = weapons.GetStored(name)
             if not item then
                 ULib.tsay(nil, "The server is missing the weapon " .. name .. "! Please tell an administator to add it or to disable this item using the convars.", true)
-                return 
+                return
             end
             if ply:CanCarryWeapon(item) then
                 ply:GiveEquipmentWeapon(item.id)
@@ -217,15 +223,15 @@ if SERVER then
         else
             item = items.GetStored(name)
             if not item then
-                ULib.tsay(nil, "The server is missing the item " .. name .. "! Please tell an administator to add it or to disable this item using the convars.", true) 
-                return 
+                ULib.tsay(nil, "The server is missing the item " .. name .. "! Please tell an administator to add it or to disable this item using the convars.", true)
+                return
             end
             if  ply:HasEquipmentItem(item.id) then
-                return 
+                return
             end
             ply.equipmentItems = ply.equipmentItems or {}
             ply.equipmentItems[#ply.equipmentItems + 1] = item.id
-    
+
             item:Equip(ply)
             ply:SendEquipment()
         end
@@ -248,11 +254,29 @@ if CLIENT then
     local Success = Sound("buttons/blip2.wav")
     local Hurt = Sound("player/pl_pain6.wav")
 
-    net.Receive("ttt_lms_notify", function(len,ply) 
+    net.Receive("ttt_lms_notify", function(len,ply)
         if (net.ReadBool()) then
+          if isfunction(StatisticsUpdatePData) then
+          end
             LocalPlayer():EmitSound(Success)
         else
+          if isfunction(StatisticsUpdatePData) then
+            StatisticsUpdatePData("lms_GuessedWrong")
+          end
             LocalPlayer():EmitSound(Hurt)
         end
+    end)
+
+    net.Receive("ttt_lms_reveal",function()
+      if (isfunction(StatisticsUpdatePData)) then
+        StatisticsUpdatePData("lms_Revealed", " revealed his/her role in total ", " times")
+      end
+    end)
+
+    net.Receive("ttt_lms_innocent",function()
+      if (isfunction(StatisticsUpdatePData)) then
+        StatisticsUpdatePData("lms_GuessedRight", " figured out that they are on their own for the ","th time")
+        LastInnoStanding = true -- see sh_lms_statistics.lua
+      end
     end)
 end
