@@ -9,6 +9,9 @@ end
 
 if CLIENT then
   local LmsLabel
+  local pl = LocalPlayer()
+  if not IsValid(pl) then return end
+  
   LastInnoStanding = false
 
   hook.Add("StatisticsDrawGui", "ttt_lms_statistics", function(panel)
@@ -21,15 +24,15 @@ if CLIENT then
 
   net.Receive("ttt_lms_result",function()
     local result = net.ReadString()
-    if (result == LocalPlayer():GetTeam()) and (LastInnoStanding) and (isfunction(AddYourStatisticsAddon)) then
-      LocalPlayer():SetPData("lms_WonAsLMS", LocalPlayer():GetPData("lms_WonAsLMS", 0) +1)
+    if (result == pl:GetTeam()) and (LastInnoStanding) and (isfunction(AddYourStatisticsAddon)) then
+      pl:SetPData("lms_WonAsLMS", pl:GetPData("lms_WonAsLMS", 0) +1)
     end
     LastInnoStanding = false
   end)
 
   function LMSStatisticsIntegration(visible)
     LmsLabel:SetVisible(visible)
-    LmsLabel:SetText("Times you guessed right that you are on your own: " .. LocalPlayer():GetPData("lms_GuessedRight", 0) .. "\n↳  You won a total of " .. LocalPlayer():GetPData("lms_WonAsLMS", 0) .. " rounds after calling LMS correctly" .. "\n\nTimes you guessed wrong: " .. LocalPlayer():GetPData("lms_GuessedWrong", 0) .. "\n\n------------------\n\nTimes you revealed yourself: " .. LocalPlayer():GetPData("lms_Revealed", 0))
+    LmsLabel:SetText("Times you guessed right that you are on your own: " .. pl:GetPData("lms_GuessedRight", 0) .. "\nYou won a total of " .. pl:GetPData("lms_WonAsLMS", 0) .. " rounds after calling LMS correctly" .. "\n\nTimes you guessed wrong: " .. pl:GetPData("lms_GuessedWrong", 0) .. "\n\n------------------\n\nTimes you revealed yourself: " .. pl:GetPData("lms_Revealed", 0))
   end
 
   hook.Add("TTT2FinishedLoading", "ttt_lms_statistics", function()
