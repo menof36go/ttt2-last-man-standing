@@ -237,7 +237,7 @@ if SERVER then
             ply.equipmentItems[#ply.equipmentItems + 1] = item.id
 
             item:Equip(ply)
-            ply:SendEquipment()
+            ply:SendEquipment(EQUIPITEMS_ADD, name)
         end
     end
 end
