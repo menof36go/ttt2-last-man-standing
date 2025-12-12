@@ -260,14 +260,16 @@ if CLIENT then
 
     net.Receive("ttt_lms_notify", function(len,ply)
         if (net.ReadBool()) then
-          if isfunction(StatisticsUpdatePData) then
-          end
+          if GetConVar("ttt_lms_success_sound"):GetBool() then
             LocalPlayer():EmitSound(Success)
+          end
         else
           if isfunction(StatisticsUpdatePData) then
             StatisticsUpdatePData("lms_GuessedWrong")
           end
+          if GetConVar("ttt_lms_hurt_sound"):GetBool() then
             LocalPlayer():EmitSound(Hurt)
+          end
         end
     end)
 

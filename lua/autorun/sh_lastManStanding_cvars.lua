@@ -25,6 +25,8 @@ Convar(cg, true, "ttt_lms_give_radar", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Reward
 Convar(cg, true, "ttt_lms_give_tracker", 0, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Reward the innocent by giving them a tracker", "bool")
 Convar(cg, true, "ttt_lms_give_armor", 0, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Reward the innocent by giving them armor", "bool")
 Convar(cg, true, "ttt_lms_give_hp", 0, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Reward the innocent by healing them", "bool")
-Convar(cg, true, "ttt_lms_percentageOfMaxHp", 100, { FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Percentage of max health the innocent will be set to have", "float", 0.1, 200, 1)
+Convar(cg, true, "ttt_lms_percentageOfMaxHp", 100, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Percentage of max health the innocent will be set to have", "float", 0.1, 200, 1)
+Convar(cg, true, "ttt_lms_success_sound", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Enable the success sound", "bool")
+Convar(cg, true, "ttt_lms_hurt_sound", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Enable the hurt sound", "bool")
 Convar(cg, true, "ttt_lms_show_debug", 0, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Show debug information", "bool")
 --
