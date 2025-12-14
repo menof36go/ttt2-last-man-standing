@@ -129,8 +129,12 @@ if SERVER then
                 end
             end]]
 
+            local successSound = GetConVar("ttt_lms_success_sound"):GetBool()
+            local hurtSound = GetConVar("ttt_lms_hurt_sound"):GetBool()
             net.Start("ttt_lms_notify")
             net.WriteBool(true)
+            net.WriteBool(successSound)
+            net.WriteBool(hurtSound)
             net.Broadcast()
             net.Start("ttt_lms_reveal")
             net.Send(caller)
@@ -174,8 +178,12 @@ if SERVER then
 
         local innosLeft = getInnosLeft()
         if (innosLeft > 1) then
+            local successSound = GetConVar("ttt_lms_success_sound"):GetBool()
+            local hurtSound = GetConVar("ttt_lms_hurt_sound"):GetBool()
             net.Start("ttt_lms_notify")
             net.WriteBool(false)
+            net.WriteBool(successSound)
+            net.WriteBool(hurtSound)
             net.Broadcast()
             if GetConVar("ttt_lms_doDamageOnFail"):GetBool() then
                 caller:TakeDamage(GetConVar("ttt_lms_damageOnFail"):GetInt(), caller, caller)
@@ -201,8 +209,12 @@ if SERVER then
                 end
             end
 
+            local successSound = GetConVar("ttt_lms_success_sound"):GetBool()
+            local hurtSound = GetConVar("ttt_lms_hurt_sound"):GetBool()
             net.Start("ttt_lms_notify")
             net.WriteBool(true)
+            net.WriteBool(successSound)
+            net.WriteBool(hurtSound)
             net.Broadcast()
             net.Start("ttt_lms_innocent")
             net.Send(caller)
@@ -259,17 +271,20 @@ if CLIENT then
     local Hurt = Sound("player/pl_pain6.wav")
 
     net.Receive("ttt_lms_notify", function(len,ply)
-        if (net.ReadBool()) then
-          if GetConVar("ttt_lms_success_sound"):GetBool() then
-            LocalPlayer():EmitSound(Success)
-          end
+        local wasSuccess = net.ReadBool()
+        local successSoundEnabled = net.ReadBool()
+        local hurtSoundEnabled = net.ReadBool()
+        if wasSuccess then
+            if successSoundEnabled then
+                LocalPlayer():EmitSound(Success)
+            end
         else
-          if isfunction(StatisticsUpdatePData) then
-            StatisticsUpdatePData("lms_GuessedWrong")
-          end
-          if GetConVar("ttt_lms_hurt_sound"):GetBool() then
-            LocalPlayer():EmitSound(Hurt)
-          end
+            if isfunction(StatisticsUpdatePData) then
+                StatisticsUpdatePData("lms_GuessedWrong")
+            end
+            if hurtSoundEnabled then
+                LocalPlayer():EmitSound(Hurt)
+            end
         end
     end)
 
